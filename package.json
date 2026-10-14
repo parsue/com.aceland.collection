@@ -1,0 +1,41 @@
+{
+  "name": "com.aceland.collection",
+  "version": "1.0.0",
+  "displayName": "AceLand Collection",
+  "description": "AceLand Collection is a high performance collection library.",
+  "unity": "2023.2",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/parsue/com.aceland.collection.git"
+  },
+  "author": {
+    "name": "Parsue - AceLand Workshop",
+    "url": "https://www.parsue.io/",
+    "email": "parsue@gmail.com"
+  },
+  "keywords": [
+    "aceland",
+    "collection",
+    "heap",
+    "tree",
+    "trie",
+    "graph",
+    "deque",
+    "ring-buffer",
+    "lru",
+    "spatial",
+    "quadtree",
+    "octree",
+    "kdtree",
+    "rtree",
+    "disjoint-set"
+  ],
+  "dependencies": {},
+  "publishConfig": {
+    "registry": "https://package.openupm.com"
+  },
+  "documentationUrl": "https://docs.parsue.io/aceland-unity-packages",
+  "type": "library",
+  "licensesUrl": "https://docs.parsue.io/aceland-unity-packages/getting-started/license",
+  "changelogUrl": "https://docs.parsue.io/aceland-unity-packages/packages/collection/change-log"
+}

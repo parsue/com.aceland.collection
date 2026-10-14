@@ -1,0 +1,38 @@
+{
+    "name": "AceLand.Collection.Dots",
+    "rootNamespace": "AceLand.Collection.Dots",
+    "references": [
+        "Unity.Burst",
+        "Unity.Collections",
+        "Unity.Mathematics"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": true,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [
+        "ACELAND_COLLECTIONS",
+        "ACELAND_BURST",
+        "ACELAND_MATHEMATICS"
+    ],
+    "versionDefines": [
+        {
+            "name": "com.unity.collections",
+            "expression": "1.3.0",
+            "define": "ACELAND_COLLECTIONS"
+        },
+        {
+            "name": "com.unity.burst",
+            "expression": "",
+            "define": "ACELAND_BURST"
+        },
+        {
+            "name": "com.unity.mathematics",
+            "expression": "",
+            "define": "ACELAND_MATHEMATICS"
+        }
+    ],
+    "noEngineReferences": false
+}

@@ -1,0 +1,22 @@
+{
+  "name": "AceLand.Collection.LicenseBridge",
+  "rootNamespace": "AceLand.Collection.LicenseBridge",
+  "references": [],
+  "includePlatforms": [
+    "Editor"
+  ],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": false,
+  "defineConstraints": [],
+  "versionDefines": [
+    {
+      "name": "com.aceland.licensing",
+      "expression": "1.0.1",
+      "define": "ACELAND_LICENSING"
+    }
+  ],
+  "noEngineReferences": false
+}

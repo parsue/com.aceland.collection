@@ -1,0 +1,110 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <!--
+      AceLand.Collection core Runtime assembly (external source project).
+
+      This project lives in a `~`-suffixed folder so Unity IGNORES it entirely.
+      It compiles the open-source (MIT) core collection types into a single
+      precompiled assembly that is installed back into the public package's
+      Runtime/ folder as a DLL-only plugin:
+
+          Packages/com.aceland.collection/Runtime/
+            ├─ AceLand.Collection.dll        (compiled here, all platforms enabled)
+            └─ AceLand.Collection.dll.meta   (PluginImporter, fixed GUID)
+
+      Why distribute the core as a precompiled DLL instead of an asmdef:
+      * When the package is consumed as an IMMUTABLE git install
+        (Library/PackageCache), Unity runs the ApiUpdater over the precompiled
+        paid Editor DLL. Mono.Cecil's AssemblyResolver only probes ON-DISK
+        directories (never Library/ScriptAssemblies). If the core were an asmdef,
+        it would only be compiled into ScriptAssemblies on the consumer side, so
+        Cecil could not resolve the Editor DLL's reference to it → Error 131 →
+        the Editor DLL is rejected → the custom drawers never register.
+      * A former work-around placed a DISABLED sidecar copy of the core next to
+        the Editor DLL, but because the core asmdef ALSO compiled to
+        AceLand.Collection.dll, two same-named assemblies collided and the Editor
+        DLL resolved its reference to the disabled sidecar → never loaded at all.
+      * Shipping the core as ONE precompiled, normally-loaded plugin DLL removes
+        both problems: there is a single AceLand.Collection.dll on disk that both
+        Unity loads and Cecil can resolve, with no name clash.
+
+      The MIT source stays in this `~` folder for readability / license
+      compliance; consumers simply reference the shipped DLL.
+
+      Compatibility policy (mirrors the Editor DLL):
+      * Reference the OLDEST supported Unity (2022.3 LTS) managed DLLs as the
+        compile floor; a DLL compiled against 2022.3 loads on every newer Unity.
+      * TargetFramework netstandard2.1 is the common denominator between
+        Unity 2022.3 and Unity 6.
+
+      Override the Unity reference root on the command line if your install path
+      differs, e.g.:
+        dotnet build -c Release -p:UnityRoot="D:\Unity\2022.3.76f1"
+    -->
+
+    <PropertyGroup>
+        <TargetFramework>netstandard2.1</TargetFramework>
+        <LangVersion>9.0</LangVersion>
+        <Nullable>disable</Nullable>
+        <ImplicitUsings>disable</ImplicitUsings>
+
+        <AssemblyName>AceLand.Collection</AssemblyName>
+        <RootNamespace>AceLand.Collection</RootNamespace>
+        <Version>1.0.0</Version>
+
+        <!-- We supply Unity assemblies manually; do not pull in any implicit refs. -->
+        <DisableImplicitFrameworkReferences>false</DisableImplicitFrameworkReferences>
+        <CopyLocalLockFileAssemblies>false</CopyLocalLockFileAssemblies>
+        <GenerateDocumentationFile>false</GenerateDocumentationFile>
+        <DebugType>portable</DebugType>
+        <AppendTargetFrameworkToOutputPath>true</AppendTargetFrameworkToOutputPath>
+
+        <!--
+          Benign warnings suppressed:
+          * CS0649 — [Serializable] fields assigned by UnityEngine.JsonUtility /
+            SerializedObject via reflection at runtime (invisible to the compiler).
+          * CS0618 — any Unity API flagged obsolete only on a branch not taken on
+            the 2022.3 compile floor.
+        -->
+        <NoWarn>$(NoWarn);CS0649;CS0618</NoWarn>
+        <AutoGenerateBindingRedirects>false</AutoGenerateBindingRedirects>
+
+        <!-- ===== Reference roots (override on CLI if needed) ===== -->
+        <!-- Oldest supported Unity = compatibility floor. -->
+        <UnityRoot Condition="'$(UnityRoot)' == ''">P:\Unity\2022.3.76f1</UnityRoot>
+        <UnityManaged>$(UnityRoot)\Editor\Data\Managed</UnityManaged>
+        <UnityEngineModules>$(UnityManaged)\UnityEngine</UnityEngineModules>
+
+        <!-- Where the finished DLL must land inside the public package.
+             Project root is one level up from this .csproj (Runtime~ → package). -->
+        <PackageRuntimeDir>$(MSBuildProjectDirectory)\..\Runtime\</PackageRuntimeDir>
+    </PropertyGroup>
+
+    <!-- ===== Unity Engine reference assemblies (compile-only) ===== -->
+    <!-- The core runtime touches only UnityEngine (SerializeField / Serializable /
+         UnityEngine.Scripting.AlwaysLinkAssembly). It does NOT reference UnityEditor
+         nor the DOTS packages (Unity.Collections / Burst / Mathematics) — those live
+         exclusively in the separate AceLand.Collection.Dots asmdef. -->
+    <ItemGroup>
+        <Reference Include="$(UnityEngineModules)\*.dll">
+            <Private>false</Private>
+        </Reference>
+    </ItemGroup>
+
+    <!-- ===== Install the finished DLL back into the public package ===== -->
+    <!-- build.ps1 drives the full pipeline, but a plain `dotnet build` here also
+         installs the DLL so the core can be iterated independently. Retries survive
+         Unity holding a lock on the previous DLL. -->
+    <Target Name="InstallToUnityPackage" AfterTargets="Build"
+            Condition="'$(SkipInstallToUnityPackage)' != 'true'">
+        <MakeDir Directories="$(PackageRuntimeDir)" />
+        <Copy SourceFiles="$(TargetPath)"
+              DestinationFolder="$(PackageRuntimeDir)"
+              Retries="6"
+              RetryDelayMilliseconds="800"
+              ContinueOnError="WarnAndContinue" />
+        <Message Importance="high"
+                 Text="&#8594; installed $(TargetFileName) to $(PackageRuntimeDir)" />
+    </Target>
+
+</Project>

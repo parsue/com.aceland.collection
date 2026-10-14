@@ -1,0 +1,11 @@
+Q:\Game Development\Game Project\G00000_AceLand-Architecture\Packages\com.aceland.collection\Runtime~\bin\Release\netstandard2.1\AceLand.Collection.deps.json
+Q:\Game Development\Game Project\G00000_AceLand-Architecture\Packages\com.aceland.collection\Runtime~\bin\Release\netstandard2.1\AceLand.Collection.dll
+Q:\Game Development\Game Project\G00000_AceLand-Architecture\Packages\com.aceland.collection\Runtime~\bin\Release\netstandard2.1\AceLand.Collection.pdb
+Q:\Game Development\Game Project\G00000_AceLand-Architecture\Packages\com.aceland.collection\Runtime~\obj\Release\netstandard2.1\AceLand.Collection.csproj.AssemblyReference.cache
+Q:\Game Development\Game Project\G00000_AceLand-Architecture\Packages\com.aceland.collection\Runtime~\obj\Release\netstandard2.1\AceLand.Collection.GeneratedMSBuildEditorConfig.editorconfig
+Q:\Game Development\Game Project\G00000_AceLand-Architecture\Packages\com.aceland.collection\Runtime~\obj\Release\netstandard2.1\AceLand.Collection.AssemblyInfoInputs.cache
+Q:\Game Development\Game Project\G00000_AceLand-Architecture\Packages\com.aceland.collection\Runtime~\obj\Release\netstandard2.1\AceLand.Collection.AssemblyInfo.cs
+Q:\Game Development\Game Project\G00000_AceLand-Architecture\Packages\com.aceland.collection\Runtime~\obj\Release\netstandard2.1\AceLand.Collection.csproj.CoreCompileInputs.cache
+Q:\Game Development\Game Project\G00000_AceLand-Architecture\Packages\com.aceland.collection\Runtime~\obj\Release\netstandard2.1\AceLand.Collection.sourcelink.json
+Q:\Game Development\Game Project\G00000_AceLand-Architecture\Packages\com.aceland.collection\Runtime~\obj\Release\netstandard2.1\AceLand.Collection.dll
+Q:\Game Development\Game Project\G00000_AceLand-Architecture\Packages\com.aceland.collection\Runtime~\obj\Release\netstandard2.1\AceLand.Collection.pdb
