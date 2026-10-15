@@ -116,6 +116,8 @@ Measured with the built-in **Collection Benchmark** tool (Editor, free). Lower t
 | `BinaryHeap<int>` (AceLand) | 25.00 | 200,000 | 392.0 KB | 1.75× faster |
 | `SortedSet<int>` (BCL, baseline) | 43.81 | 200,000 | 3.92 MB | 1.00× |
 
+![Benchmark](https://images.gitbook.com/__img/dpr=2,width=760,onerror=redirect,format=auto,signature=-866734191/https%3A%2F%2Ffiles.gitbook.com%2Fv0%2Fb%2Fgitbook-x-prod.appspot.com%2Fo%2Fspaces%252F63jnasUumLZW6LY8UgAR%252Fuploads%252FTH8yhzrO56XcWGB2J7Y3%252Fimage.png%3Falt%3Dmedia%26token%3Df7567ab0-c1a6-4cbd-a6c0-7f8ecfc0be95)
+
 On the same incremental priority-queue workload, `BinaryHeap<int>` is about **1.75× faster** than `SortedSet<int>` (25.00 ms vs 43.81 ms) while allocating **roughly one tenth of the GC** (392 KB vs 3.92 MB). The low allocation comes from pre-sizing the heap so the backing array never grows during the run; `SortedSet<int>` allocates a red-black tree node per element, which dominates its GC cost. Prefer `BinaryHeap<int>` whenever you need true incremental push / pop of the current extreme.
 
 ### Managed layer — spatial radius queries
@@ -130,6 +132,8 @@ On the same incremental priority-queue workload, `BinaryHeap<int>` is about **1.
 | `SpatialHashGrid2D` — radius query | 29.93 | 2,000 | 0 B | 45.88× faster |
 | Brute-force radius query (BCL, baseline) | 1373.23 | 2,000 | 0 B | 1.00× |
 
+![Benchmark](https://images.gitbook.com/__img/dpr=2,width=760,onerror=redirect,format=auto,signature=172942485/https%3A%2F%2Ffiles.gitbook.com%2Fv0%2Fb%2Fgitbook-x-prod.appspot.com%2Fo%2Fspaces%252F63jnasUumLZW6LY8UgAR%252Fuploads%252FA1jgaoEAz2IAP6WDuII1%252FCollection_Chart_Spatial_Hash_Grid.png%3Falt%3Dmedia%26token%3D3b53a8c3-ed41-4e0e-b478-c60e190fea31)
+
 For repeated neighbour lookups the spatial hash grid is **~46× faster** than a brute-force scan (29.93 ms vs 1373.23 ms over 2,000 queries), because each query only visits the handful of cells overlapping the radius instead of all 100,000 points. Even the one-time insert phase amortises well against the brute-force cost. The radius query allocates **zero GC** across all 2,000 calls: every spatial `Query*` / `FindKNearest` method now offers a caller-supplied buffer overload that clears and refills a reused `List<T>` (the older `out List<T>` overloads remain for compatibility but allocate one list per call). The grid still allocates to store its buckets (12.88 MB across 100,000 inserts), so reuse a grid — and a single query buffer — across many queries to get the full benefit; the brute-force scan allocates nothing but pays a linear cost on every query.
 
 ### Managed layer — indexed priority queue re-prioritise (150,000 ops)
@@ -143,6 +147,8 @@ For repeated neighbour lookups the spatial hash grid is **~46× faster** than a 
 | `IndexedPriorityQueue<int,int>` (AceLand) | 19.70 | 150,000 | 4.54 MB | 4.69× faster |
 | `SortedSet` re-insert (BCL, baseline) | 92.48 | 150,000 | 8.32 MB | 1.00× |
 
+![Benchmark](https://images.gitbook.com/__img/dpr=2,width=760,onerror=redirect,format=auto,signature=396120118/https%3A%2F%2Ffiles.gitbook.com%2Fv0%2Fb%2Fgitbook-x-prod.appspot.com%2Fo%2Fspaces%252F63jnasUumLZW6LY8UgAR%252Fuploads%252FMLFni9gakVlTTKUZGhNI%252Fimage.png%3Falt%3Dmedia%26token%3D05267572-8df3-40c1-af16-9aa3c951139c)
+
 On a re-prioritise workload `IndexedPriorityQueue<int,int>` is about **4.69× faster** than the `SortedSet` remove-then-reinsert pattern (19.70 ms vs 92.48 ms). The indexed queue reaches the target element in O(1) via its position map and sifts it into place, whereas the `SortedSet` pays two O(log n) tree operations plus tuple boxing for every update. Pre-sizing via `Create(capacity)` now also **roughly halves its GC** (4.54 MB vs 8.32 MB). Prefer `IndexedPriorityQueue` for Dijkstra / A* style algorithms where node priorities change constantly.
 
 ### Managed layer — double-ended queue front operations
@@ -153,11 +159,12 @@ On a re-prioritise workload `IndexedPriorityQueue<int,int>` is about **4.69× fa
 
 | Structure | Time (ms) | Ops | GC Alloc | vs Baseline |
 | --- | ---: | ---: | ---: | --- |
-| `Deque<int>` — insert (AceLand) | 0.59 | 100,000 | 1.03 MB | 7.81× faster |
 | `Deque<int>` — insert pre-sized (AceLand) | 0.69 | 100,000 | 392.0 KB | 6.71× faster |
 | `List` front-insert (BCL, baseline) | 4.63 | 20,000 | 280.0 KB | 1.00× |
 | `Deque<int>` — drain (AceLand) | 0.24 | 100,000 | 0 B | 693.45× faster |
 | `List` front-remove (BCL, baseline) | 167.05 | 20,000 | 0 B | 1.00× |
+
+![Benchmark](https://images.gitbook.com/__img/dpr=2,width=760,onerror=redirect,format=auto,signature=1402743070/https%3A%2F%2Ffiles.gitbook.com%2Fv0%2Fb%2Fgitbook-x-prod.appspot.com%2Fo%2Fspaces%252F63jnasUumLZW6LY8UgAR%252Fuploads%252FoAiYdwK5ze51upFN5s5J%252Fimage.png%3Falt%3Dmedia%26token%3D307b1629-b114-4422-921f-d9c71b4d7893)
 
 Splitting the workload shows each side on its own baseline. On **insertion** `Deque<int>` is about **7.81× faster** (0.59 ms for 100,000 ring-buffer inserts vs 4.63 ms for 20,000 `List` front inserts). The default `Create()` deque's 1.03 MB GC is the genuine cost of amortised geometric growth (the ring buffer doubles from 8 past 131,072 slots, discarding each superseded array); pre-sizing with `CreateWithCapacity(n)` collapses it to a **single 392 KB backing block** — a **~62% GC reduction** at the same throughput. On the **drain** the gap widens dramatically: `Deque<int>` empties 100,000 elements in **0.24 ms** with zero allocation, while `List<int>.RemoveAt(0)` needs 167.05 ms for only 20,000 removals — about **693× slower**, because every front removal shifts the whole backing array. Use `Deque<T>` for queues, sliding windows, and any workload that pushes and pops at both ends; prefer `CreateWithCapacity(n)` when the element count is known up front.
 
@@ -171,6 +178,8 @@ Splitting the workload shows each side on its own baseline. On **insertion** `De
 | --- | ---: | ---: | ---: | --- |
 | `LruCache` (AceLand) | 4.60 | 50,000 | 776.0 KB | 1.75× faster |
 | `Dictionary` + `LinkedList` LRU (BCL, baseline) | 8.07 | 50,000 | 880.0 KB | 1.00× |
+
+![Benchmark](https://images.gitbook.com/__img/dpr=2,width=760,onerror=redirect,format=auto,signature=1863049456/https%3A%2F%2Ffiles.gitbook.com%2Fv0%2Fb%2Fgitbook-x-prod.appspot.com%2Fo%2Fspaces%252F63jnasUumLZW6LY8UgAR%252Fuploads%252FZPbEgm5UPaS4NIru7fiA%252Fimage.png%3Falt%3Dmedia%26token%3D9d41f1be-88fc-4ecb-ae95-750d8d0214a6)
 
 `LruCache` is about **1.75× faster** than a manual `Dictionary` + `LinkedList` LRU (4.60 ms vs 8.07 ms) while packaging the lookup, recency reorder, and eviction into a single tested type. Pre-sizing its internal map to capacity means it now also allocates **less** GC than the hand-rolled baseline (776 KB vs 880 KB) — so you get both the speed and the memory edge in a correct, ready-to-use O(1) cache.
 
@@ -186,6 +195,8 @@ Splitting the workload shows each side on its own baseline. On **insertion** `De
 | `Dictionary` build (BCL, baseline) | 0.73 | 100,000 | 2.08 MB | 1.00× |
 | `BiDictionary` — reverse-lookup (AceLand) | 1.85 | 50,000 | 0 B | 21.41× faster |
 | `Dictionary` linear reverse-scan (BCL, baseline) | 39.61 | 5,000 | 0 B | 1.00× |
+
+![Benchmark](https://images.gitbook.com/__img/dpr=2,width=760,onerror=redirect,format=auto,signature=487849181/https%3A%2F%2Ffiles.gitbook.com%2Fv0%2Fb%2Fgitbook-x-prod.appspot.com%2Fo%2Fspaces%252F63jnasUumLZW6LY8UgAR%252Fuploads%252F6ZTad9btuKrIyvOmLezS%252Fimage.png%3Falt%3Dmedia%26token%3D3c042723-7cdb-48b2-96c2-c745eb53803c)
 
 Splitting the suite separates the one-time cost of a dual index from its query payoff. **Building** both indexes is only about **1.23× slower** than building a single `Dictionary` over the *same* 100,000 entries (1.44 ms / 2.50 MB vs 0.73 ms / 2.08 MB). The single-storage design keeps this near parity: each `(key, value)` pair lives once in one entry table with two hash-bucket chains layered over it, and entries no longer cache their hash codes, so the ~0.4 MB delta is just the second bucket/link array for the reverse chain — the irreducible floor for an O(1) reverse index (kept to a single allocation by pre-sizing via `Create(capacity)`). That cost is repaid on the **reverse-lookup**: `BiDictionary` answers 50,000 value→key queries in **1.85 ms** with zero allocation, whereas the plain `Dictionary` needs 39.61 ms for only 5,000 linear scans — roughly **21.41× faster** on ten times the queries. Use `BiDictionary` when both lookup directions are hot; it trades an almost-free build for reverse lookups that never scan.
 
