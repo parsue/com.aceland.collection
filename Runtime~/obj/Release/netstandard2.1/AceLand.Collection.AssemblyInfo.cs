@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("AceLand.Collection")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Release")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+39d02c6ec32ddf3bfba9ca68c98702eb57eab426")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+e152cd09c4fa6bab301de2932f7018887e45920e")]
 [assembly: System.Reflection.AssemblyProductAttribute("AceLand.Collection")]
 [assembly: System.Reflection.AssemblyTitleAttribute("AceLand.Collection")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

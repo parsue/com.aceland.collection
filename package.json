@@ -1,6 +1,6 @@
 {
   "name": "com.aceland.collection",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "displayName": "AceLand Collection",
   "description": "AceLand Collection is a high performance collection library.",
   "unity": "2023.2",

@@ -4,7 +4,11 @@ All notable changes to this project will be documented in this file.
 
 ---
 
-## [1.0.0] - 2026-09-
+## [1.0.1] - 2026-10-15
+### Fixed
+- Benchmark Window cannot open script issue
+
+## [1.0.0] - 2026-10-14
 ### Added
 - **DOTS layer bundled in** (`AceLand.Collection.Dots` assembly): Burst-compilable, job-safe `NativeContainer`-backed variants — `NativeBinaryHeap<T, TComparer>`, `NativeSpatialHashGrid2D/3D<T>`, `NativeKdTree2D/3D<T>`.
 - **Conversion bridges** (`ToNative` / `ToManaged` extension methods) between managed and native variants, implemented via `internal` access (`InternalsVisibleTo` + snapshot / backing accessors) so the public API surface is unchanged.
